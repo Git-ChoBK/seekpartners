@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seek.mapper.ScoreMapper">
+ 
+ <insert id="insert">
+ 	insert into score (sbno, m_id, s_id, s_score, s_comment, s_date)
+ 	values (seq_score.nextval, #{m_id}, #{s_id}, #{s_score}, #{s_comment}, sysdate)
+ </insert>
+ 
+ <select id="read" resultType="com.seek.domain.ScoreVO">
+ 	select * from score where s_id = #{s_id} and m_id = #{m_id}
+ </select>
+ 
+ <delete id="delete">
+ 	delete from score where sbno = #{sbno}
+ </delete>
+ 
+ <update id="update">
+ 	update score set s_score = #{s_score}, s_comment = #{s_comment} where sbno=#{sbno}
+ </update>
+
+<select id="getList" resultType="com.seek.domain.ScoreVO">
+<![CDATA[
+select * from score where s_id = #{s_id} and sbno>0
+]]>
+</select>
+
+<select id="getList_m" resultType="com.seek.domain.ScoreVO">
+<![CDATA[
+select * from score where m_id = #{m_id} and sbno>0
+]]>
+</select><!-- 추가 -->
+
+<select id="getListWithPaging_s" resultType="com.seek.domain.ScoreVO">
+<![CDATA[
+select sbno, m_id, s_id, s_score, s_comment, s_date
+from (
+select /*+index(score idx_score)*/
+rownum rn, sbno, m_id, s_id, s_score, s_comment, s_date
+from score
+where score.s_id = #{s_id}
+    and sbno>0
+    and rownum<=#{cri.pageNum}*#{cri.amount}
+)where rn>(#{cri.pageNum}-1)*#{cri.amount}
+]]>
+</select><!-- 추가 -->
+
+<select id="getCountBySid" resultType="int">
+<![CDATA[
+select count(s_id) from score where s_id = #{s_id}
+]]>
+</select><!-- 추가 -->
+
+<select id="getListWithPaging_m" resultType="com.seek.domain.ScoreVO">
+<![CDATA[
+select sbno, m_id, s_id, s_score, s_comment, s_date
+from (
+select /*+index(score idx_score)*/
+rownum rn, sbno, m_id, s_id, s_score, s_comment, s_date
+from score
+where score.m_id = #{m_id}
+    and sbno>0
+    and rownum<=#{cri.pageNum}*#{cri.amount}
+)where rn>(#{cri.pageNum}-1)*#{cri.amount}
+]]>
+</select><!-- 추가 -->
+
+<select id="getCountByMid" resultType="int">
+<![CDATA[
+select count(m_id) from score where m_id = #{m_id}
+]]>
+</select><!-- 추가 -->
+</mapper>

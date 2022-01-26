@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seek.mapper.PReplyMapper">
+
+	<insert id="insert">		
+		insert into p_board_rpl(prno, pbno, pr_content, m_id)
+		values (seq_reply.nextval, #{pbno}, #{pr_content}, #{m_id} )
+	</insert>
+	
+	<select id="read" resultType="com.seek.domain.PReplyVO">
+		select * from p_board_rpl where prno = #{prno}
+	</select>
+	
+	<delete id="delete">
+		delete from p_board_rpl where prno = #{prno}
+	</delete>
+	
+	<update id="update">
+		update p_board_rpl set pr_content = #{pr_content}, 
+		pr_update = sysdate where prno = #{prno}
+	</update>
+	
+	<select id="getListWithPaging" resultType="com.seek.domain.PReplyVO">
+		<!-- select prno, pbno, pr_content, m_id, pr_date, pr_update
+		from p_board_rpl
+		where pbno = #{pbno}
+		order by prno asc -->
+		
+		<![CDATA[
+		select prno, pbno, pr_content, m_id, pr_date, pr_update
+		from
+			(
+			select /*+index(p_board_rpl idx_reply) */
+			rownum rn, pbno, prno, pr_content, m_id, pr_date, pr_update
+			from p_board_rpl
+			where pbno = #{pbno}
+			and prno>0
+			and rownum<= #{cri.pageNum} * #{cri.amount}
+		)where rn>(#{cri.pageNum} -1)* #{cri.amount}		
+		]]>
+	</select>
+	
+	<select id="getCountByPbno" resultType="int">
+	<![CDATA[
+	select count(prno) from p_board_rpl where pbno = #{pbno}
+	]]>	
+	</select>
+</mapper>

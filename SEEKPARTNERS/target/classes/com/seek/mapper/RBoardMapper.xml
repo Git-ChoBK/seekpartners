@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seek.mapper.RBoardMapper">
+	
+	<resultMap type="com.seek.domain.RBoardVO" id="RBoardMap">
+			<id property="rbno" column="rbno"/>
+			<result property="rbno" column="rbno"/>
+			<result property="m_id" column="m_id"/>
+			<result property="r_title" column="r_title"/>
+			<result property="r_shop" column="r_shop"/>
+			<result property="r_content" column="r_content"/>
+			<result property="r_area" column="r_area"/>
+			<result property="r_date" column="r_date"/>
+			<result property="r_update" column="r_update"/>
+			<result property="r_score" column="r_score"/>
+			<result property="r_areasplit" column="r_areasplit"/>
+			<result property="lng" column="lng"/>
+			<result property="lat" column="lat"/>
+			<collection property="attachList" resultMap="attachMap"></collection>
+		</resultMap>
+		
+		<resultMap type="com.seek.domain.RboardAttachVO" id="attachMap">
+			<result property="rbno" column="rbno"/>
+			<result property="uuid" column="uuid"/>
+			<result property="uploadpath" column="uploadpath"/>
+			<result property="filetype" column="filetype"/>
+			<result property="filename" column="Filename"/>
+		</resultMap>
+	
+		<select id="getList" resultMap="RBoardMap">
+			select board.*, img.*
+			  from r_board board left outer join r_board_img img
+			    on board.rbno = img.rbno
+			order by board.rbno desc
+		</select>
+	
+	<insert id="insert">
+		insert into r_board(rbno, m_id, r_title, r_shop, r_content, r_area, r_score, r_areasplit, lng, lat)
+		values(seq_r_board.nextval, #{m_id}, #{r_title}, #{r_shop}, #{r_content}, #{r_area}, #{r_score}, #{r_areasplit}, #{lng}, #{lat})
+	</insert>
+	
+	<insert id="insertSelectKey">
+		<selectKey keyProperty="rbno" order="BEFORE" resultType="long">
+			select seq_r_board.nextval from dual
+		</selectKey>
+		
+		insert into r_board(rbno, m_id, r_title, r_shop, r_content, r_area, r_score, r_areasplit, lng, lat)
+		values(#{rbno}, #{m_id}, #{r_title}, #{r_shop}, #{r_content}, #{r_area}, #{r_score}, #{r_areasplit}, #{lng}, #{lat})
+	</insert>
+	
+	<select id="read" resultType="com.seek.domain.RBoardVO">
+		select * from r_board where rbno = #{rbno}
+	</select>
+	
+	<update id="update">
+		update r_board
+		set m_id = #{m_id},
+			r_title = #{r_title},
+			r_shop = #{r_shop},
+			r_content = #{r_content},
+			r_score = #{r_score},
+			r_area = #{r_area},
+			lat = #{lat},
+			lng = #{lng},
+			r_areasplit = #{r_areasplit},
+			r_update = sysdate
+		where rbno = #{rbno}
+	</update>
+	
+	<delete id="delete">
+		delete from r_board where rbno = #{rbno}
+	</delete>
+	
+   <!-- 검색 -->
+   <sql id="criteria">
+      <trim prefix="(" suffix=") AND " prefixOverrides="OR">
+         <foreach item="type" collection="typeArr">
+            <trim prefix="OR">
+               <choose>
+                  <when test="type == 'T'.toString()">   <!-- 제목 -->
+                     r_title like '%' || #{keyword} || '%'
+                  </when>
+                  <when test="type == 'S'.toString()">   <!-- 가게명 -->
+                     r_shop like '%' || #{keyword} || '%'
+                  </when>
+                  <when test="type == 'C'.toString()">   <!-- 내용 -->
+                     r_content like '%' || #{keyword} || '%'
+                  </when>
+                  <when test="type == 'L'.toString()">   <!-- 지역 -->
+                     r_area like '%' || #{keyword} || '%'
+                  </when>
+               </choose>
+            </trim>
+         </foreach>
+      </trim>
+   </sql>
+   
+   <!-- 페이징 처리 -->
+   <select id="getListWithPaging" resultMap="RBoardMap">
+   <![CDATA[
+      select *
+        from (select /*+ INDEX(board) INDEX_DESC(img) */
+              rownum rn, board.rbno, board.m_id, board.r_title, board.r_shop, board.r_content, board.r_area, board.r_areasplit, board.r_date, board.r_update, board.r_score, board.lat, board.lng,
+              			 img.uuid, img.uploadpath, img.filetype, img.filename
+                from r_board board left outer join r_board_img img
+                  on board.rbno = img.rbno
+               where
+   ]]>
+   
+   <include refid="criteria"></include>
+   
+   <![CDATA[
+                  	 rownum <= #{pageNum} * #{amount})
+       where rn > (#{pageNum} - 1) * #{amount}
+   ]]>
+   </select>
+   
+   <select id="getTotalCount" resultType="int">
+      select count(*) from r_board where 
+      
+      <include refid="criteria"></include>
+      
+      rbno > 0
+   </select>
+   
+   
+   <!-- 내가 쓴 글 -->
+   <select id="myPageRList" resultType="com.seek.domain.RBoardVO">
+      <![CDATA[
+      select *
+        from (select /*+ INDEX_DESC(board) */
+              rownum rn, board.rbno, board.m_id, board.r_title, board.r_shop, board.r_content, board.r_area, board.r_date, board.r_update, board.r_score, board.r_areasplit, board.lat, board.lng
+                from r_board board
+               where board.m_id = #{m_id}
+               and board.rbno > 0
+               and
+   
+                  	 rownum <= #{cri.pageNum} * #{cri.amount})
+       where rn > (#{cri.pageNum} - 1) * #{cri.amount}
+   ]]>
+   </select>
+   
+    <select id="getTotalCountMine" resultType="int">
+ 		select count(*) from r_board
+ 		 where m_id = #{m_id}
+ 	</select>
+
+</mapper>

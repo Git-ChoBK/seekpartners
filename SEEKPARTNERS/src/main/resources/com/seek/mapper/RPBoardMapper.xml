@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seek.mapper.RPBoardMapper">
+	
+	<!-- 글목록 -->
+	<select id="getList" resultType="com.seek.domain.RPBoardVO">
+	<![CDATA[
+		select *
+		  from rp_board
+		 where rpbno > 0
+		   and m_id = #{m_id}
+	    order by rpbno desc
+	]]>
+	</select>
+	
+	<!-- 글등록 -->
+	<insert id="register">
+		insert into rp_board(rpbno, m_id, rp_title, rp_list, rp_content, rp_date, rp_update)
+		values(seq_rp_board.nextval, #{m_id}, #{rp_title}, #{rp_list}, #{rp_content}, sysdate, sysdate)
+	</insert>
+	
+	<insert id="registerSelectKey">
+		<selectKey keyProperty="rpbno" order="BEFORE" resultType="long">
+			select seq_rp_board.nextval from dual
+		</selectKey>
+		
+		insert into rp_board(rpbno, m_id, rp_title, rp_list, rp_content, rp_date, rp_update)
+		values(#{rpbno}, #{m_id}, #{rp_title}, #{rp_list}, #{rp_content}, sysdate, sysdate)
+	</insert>
+	
+	<!-- 글상세보기 -->
+	<select id="get" resultType="com.seek.domain.RPBoardVO">
+		select *
+		  from rp_board
+		 where rpbno = #{rpbno}
+	</select>
+	
+	<!-- 글수정 -->
+	<update id="modify">
+		update rp_board
+		set rp_title = #{rp_title},
+			rp_content = #{rp_content},
+			rp_list = #{rp_list},
+			m_id = #{m_id},
+			rp_update = sysdate
+		 where rpbno = #{rpbno}
+	</update>
+	
+	<!-- 글삭제 -->
+	<delete id="remove">
+		delete from rp_board where rpbno = #{rpbno}
+	</delete>
+	
+	<!-- 검색 -->
+	<sql id="criteria">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+			<foreach item="type" collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">	<!-- 글제목 -->
+							rp_title like '%' || #{keyword} || '%'
+						</when>
+						<when test="type == 'C'.toString()">	<!-- 글내용 -->
+							rp_content like '%' || #{keyword} || '%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+	</sql>
+	
+	<!-- 페이징처리된 글목록 -->
+	<select id="getListWithPaging" resultType="com.seek.domain.RPBoardVO">
+	<![CDATA[
+		select rpbno, rp_title, rp_list, rp_content, m_id, rp_date, rp_update
+		  from (select /*+INDEX_DESC(rp_board ) */
+		  		rownum rn, rpbno, rp_title, rp_list, rp_content, m_id, rp_date, rp_update
+		  		  from rp_board
+		  		 where
+		  		 
+
+	]]>
+	
+		<include refid="criteria"></include>
+		
+	<![CDATA[
+					   rownum <= #{pageNum} * #{amount})
+		 where rn > (#{pageNum} - 1) * #{amount}
+	]]>
+	</select>
+	
+	
+	<!-- 전체 데이터 개수 처리 -->
+	<select id="getTotalCount" resultType="int">
+		select count(*) from rp_board
+		 where 
+		 
+		<include refid="criteria"></include>
+		
+			   rpbno > 0
+	</select>
+	
+	<!-- 페이징처리된 글목록 -->
+	<select id="getListWithPagingMine" resultType="com.seek.domain.RPBoardVO">
+	<![CDATA[
+		select rpbno, rp_title, rp_list, rp_content, m_id, rp_date, rp_update
+		  from (select /*+INDEX_DESC(rp_board ) */
+		  		rownum rn, rpbno, rp_title, rp_list, rp_content, m_id, rp_date, rp_update
+		  		  from rp_board
+		  		 where rp_board.m_id = #{m_id}
+		  		 and rpbno>0
+		  		 and
+					   rownum <= #{cri.pageNum} * #{cri.amount})
+		 where rn > (#{cri.pageNum} - 1) * #{cri.amount}
+	]]>
+	</select>
+	
+	<!-- 내가 쓴 전체 데이터 개수 처리 -->
+	<select id="getTotalCountMine" resultType="int">
+		select count(*) from rp_board
+		 where m_id = #{m_id} 		
+	</select>
+	
+	<!-- 관리자페이지 문의확인 -->
+	<select id="arlist" resultType="com.seek.domain.RPBoardVO">
+	<![CDATA[
+		select *
+		  from rp_board
+		 where rpbno > 0
+	    order by rpbno desc
+	]]>
+	</select>
+	
+
+</mapper>
+

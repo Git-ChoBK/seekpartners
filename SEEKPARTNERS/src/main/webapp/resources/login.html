@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Template Mo">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+
+    <title>로그인</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="assets/css/fontawesome.css">
+    <link rel="stylesheet" href="assets/css/first-default.css">
+    <link rel="stylesheet" href="assets/css/owl.css">
+    <link rel="stylesheet" href="assets/css/lightbox.css">
+
+</head>
+<body>
+
+    <div id="div-cont" class="container-wrap">
+
+
+    <div id="login-wrap">
+
+    <section class="list-page" id="login-page">
+
+    <div class="container">
+        <div class="row">
+            <!-- <div class="col-md-4 col-md-offset-4"> -->
+            <div class="col-lg-6" style="margin: 0 auto;">
+                <div class="login-card card card-default">
+                    <div class="card-header">
+                        <h3 class="card-title">SEEK.PARTNER</h3>
+                    </div>
+                    <div class="card-body">
+                        <form role="form" method="post" action="/login">
+                            <fieldset>
+                                <div class="form-group regform">
+                                    <label></label>
+                                    <input class="form-control input-boder-none" placeholder="ID" name="username"  autofocus>
+                                    <label></label>
+                                    <input class="form-control input-boder-none" placeholder="Password" name="password" type="password">
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="remember-me" type="checkbox">자동로그인
+                                    </label>
+                                </div>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                                <!-- Change this to a button or input when using this as a form -->
+                                <div class="login-btn-box">
+                                    <button class="btn btn-lg btn-success btn-block">SIGNUP</button>
+                                    <button class="btn btn-lg btn-primary btn-block pull-right">Login</button>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </section>
+
+    </div>
+    </div>
+
+
+
+    </div>
+
+    <!-- jQuery -->
+    <script src="/resources/vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/resources/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="/resources/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/resources/dist/js/sb-admin-2.js"></script>
+
+</body>
+
+
+</html>

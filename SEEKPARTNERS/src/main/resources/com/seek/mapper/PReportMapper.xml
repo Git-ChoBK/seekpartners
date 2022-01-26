@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.seek.mapper.PReportMapper">
+
+	<!-- 목록 -->
+ 	<select id="getList" resultType="com.seek.domain.PReportVO">
+		select * from p_report where prebno > 0
+	</select>
+	
+	<!-- 등록 -->
+	<insert id="register">
+		insert into p_report(prebno, m_id, reporter, pbno, pre_title, pre_content, pre_list, pre_date, pre_update)
+		values (seq_p_report.nextval, #{m_id}, #{reporter}, #{pbno}, #{pre_title}, #{pre_content}, #{pre_list}, sysdate, sysdate)
+	</insert>
+	
+	<insert id="registerSelectKey">
+		<selectKey keyProperty="prebno" order="BEFORE" resultType="long">
+			select seq_p_report.nextval from dual
+		</selectKey>
+		
+		insert into p_report(prebno, m_id, reporter, pbno, pre_title, pre_content, pre_list, pre_date, pre_update)
+		values (#{prebno}, #{m_id}, #{reporter}, #{pbno}, #{pre_title}, #{pre_content}, #{pre_list}, sysdate, sysdate)
+	</insert>
+	
+	<!-- 상세보기 -->
+	<select id="read" resultType="com.seek.domain.PReportVO">
+		select * from p_report where prebno = #{prebno}
+	</select>
+	
+	<!-- 글수정 -->
+	<update id="modify">
+		update p_report
+		   set pre_title	= #{pre_title},
+			   pre_content	= #{pre_content},
+			   pre_list		= #{pre_list},
+			   pre_update	= sysdate
+		 where prebno		= #{prebno}
+	</update>
+	
+	<!-- 검색 -->
+	<sql id="criteria">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+			<foreach item="type" collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">	<!-- 글제목 -->
+							pre_title like '%' || #{keyword} || '%'
+						</when>
+						<when test="type == 'C'.toString()">	<!-- 글내용 -->
+							pre_content like '%' || #{keyword} || '%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+	</sql>
+	
+	<!-- 글삭제 -->
+	<delete id="remove">
+		delete from p_report where prebno = #{prebno}
+	</delete>
+	
+	<!-- 페이징처리된 글목록 -->
+	<select id="getListWithPaging" resultType="com.seek.domain.PReportVO">
+	<![CDATA[
+		select prebno, m_id, reporter, pbno, pre_title, pre_content, pre_list, pre_date, pre_update
+		  from (select /*+ INDEX_DESC(p_report ) */
+		  		rownum rn, prebno, m_id, reporter, pbno, pre_title, pre_content, pre_list, pre_date, pre_update
+		  		  from p_report
+		  		 where
+	]]>
+	
+		<include refid="criteria"></include>
+		
+	<![CDATA[
+					   rownum <= #{pageNum} * #{amount})
+		 where rn > (#{pageNum} - 1) * #{amount}
+	]]>
+	</select>
+	
+	<!-- 전체 데이터 개수 처리 -->
+	<select id="getTotalCountMine" resultType="int">
+		select count(*)
+		  from p_report
+		 where reporter = #{m_id}
+	</select>
+	
+	<!-- 전체 데이터 개수 처리 -->
+	<select id="getTotalCount" resultType="int">
+		select count(*) from p_report where prebno > 0
+	</select>
+	
+		<!-- 페이징처리된 글목록 -->
+	<select id="getListWithPagingMine" resultType="com.seek.domain.PReportVO">
+	<![CDATA[
+		select prebno, m_id, reporter, pbno, pre_title, pre_content, pre_list, pre_date, pre_update
+		  from (select /*+ INDEX_DESC(p_report ) */
+		  		rownum rn, prebno, m_id, reporter, pbno, pre_title, pre_content, pre_list, pre_date, pre_update
+		  		  from p_report
+		  		 where reporter = #{m_id}
+		  		 and prebno > 0
+		  		 and
+
+					   rownum <= #{cri.pageNum} * #{cri.amount})
+		 where rn > (#{cri.pageNum} - 1) * #{cri.amount}
+	]]>
+	</select>
+
+</mapper>

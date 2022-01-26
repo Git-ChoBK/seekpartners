@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.seek.mapper.ChatMapper">
+ 	
+ 	<select id="run" resultType="com.seek.domain.ChatVO">
+		select pbno,m_id from p_board where pbno = #{pbno}
+ 	</select>
+ 	<select id="getChatList" resultType="com.seek.domain.Chat">
+ 		select * from chat where pbno = #{pbno} order by chatTime
+ 	</select>
+ 	<insert id="submit">
+ 		insert into chat(
+ 		pbno, chatname, chatcontent, chattime
+ 		) values ( 
+ 		#{pbno},
+ 		#{chatName},
+ 		#{chatContent},
+ 		sysdate
+ 		)
+ 	</insert>
+ </mapper>

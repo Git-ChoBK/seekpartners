@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="">
+<meta name="author" content="Template Mo">
+<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+
+<title>글 등록-예시</title>
+
+<!-- Bootstrap core CSS -->
+<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+<!-- Additional CSS Files -->
+<link rel="stylesheet" href="assets/css/fontawesome.css">
+<link rel="stylesheet" href="assets/css/first-default.css">
+<link rel="stylesheet" href="assets/css/owl.css">
+<link rel="stylesheet" href="assets/css/lightbox.css">
+<link rel="stylesheet" href="assets/css/jquery.datetimepicker.css">
+
+</head>
+
+<body>
+
+  <!-- start register section -------------------------------------------------------------------------->
+  <section class="list-page" id="register-review">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12" style="padding: 120px;">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="get-single-item">
+
+                <div class="card card-default">
+                    <div class="card-header">파티모집 글쓰기</div>
+
+                    <div class="card-body">
+                        <form>
+                            <div class="form-group regform">
+
+                                <label>제목</label>
+                                <input class="form-control input-boder-none" name="title" autofocus>
+                            
+                                <!-- <label>시간(캘린더 사용시 캘린더로 대체)</label>     
+                                <select class="form-select">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select> -->
+
+
+                                <!-- <div class="form-group">
+                                  <div id="seek-date-form">
+                                    <label>시간</label>
+                                    <input type="text" name="seek-date" id="datetimepicker" class="form-control" placeholder="시간입력" autocomplete='off'>
+                                  </div>
+                                </div> -->
+
+                                <div class="form-group">
+                                  <div class="form-group " id="seek-date">
+                                    <label>시간</label>&nbsp;<span class="text-muted m-0 text-muted"></span>
+                                    <input name="seekdate" class="form-control" placeholder="주문시간을 입력해주세요">
+                                  </div>
+                                </div>
+
+
+                                <label>인원</label>     
+                                <select class="form-select">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select>
+
+                                <label>메뉴</label>
+                                <select class="form-select">
+                                  <option>한식</option>
+                                  <option>중식</option>
+                                  <option>양식</option>
+                                  <option>일식</option>
+                                  <option>야식</option>
+                                  <option>분식</option>
+                                  <option>찜/탕</option>
+                                  <option>치킨</option>
+                                  <option>피자</option>
+                                  <option>비건</option>
+                                  <option>디저트</option>
+                                  <option>아시안</option>
+                                  <option>기타</option>
+                              </select>
+
+                                <label>내용</label>
+                                <textarea class="form-control input-boder-none" rows="10"></textarea>
+                                
+                                <label>해쉬태그사용시</label>
+                                <input class="form-control input-boder-none">
+                                
+                                <!--지도영역-->
+                                <label>지도가 들어갈 영역</label>
+                                <!-- <textarea class="form-control input-boder-none" rows="10"></textarea> -->
+                                <div class="form-group form-inline">
+                                  <a type="button" class="btn btn-outline-success" onclick="getRegion()" style="margin-right: 5px;">
+                                    주소검색
+                                  </a>
+                                  <input type="text" id="getAddress" name="addr" readonly value="">
+                                </div>
+                                <div id="map" class="lg-8" style="min-width:300px; min-height: 300px;">
+                                  <input id="Lat" value="">
+                                  <input id="Lng" value="">
+                                </div>
+
+
+                            </div>
+                            <!--regForm 끝-->
+
+                            <div class="card-footer">
+                                <button class="btn">글 등록</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <div class="main-button-red">
+                <a href="test.html">메인페이지로 이동</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+        <p>FOOTER</a></p>
+      </div>
+  </section>
+  <!-- end register section -->
+
+
+  <!-- Scripts -->
+  <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <!-- <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script> -->
+
+    <script src="assets/js/isotope.min.js"></script>
+    <script src="assets/js/owl-carousel.js"></script>
+    <script src="assets/js/lightbox.js"></script>
+    <script src="assets/js/tabs.js"></script>
+    <script src="assets/js/video.js"></script>
+    <script src="assets/js/slick-slider.js"></script>
+    <script src="assets/js/custom.js"></script>
+    <script src="assets/js/jquery.datetimepicker.js"></script>
+
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7b35260abd815a3642778f0bf811a9f8&libraries=services"></script>
+    <script type="text/javascript">
+
+        //지도 설정
+        var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+          mapOption = {
+            center: new daum.maps.LatLng(37.537187, 127.005476), // 지도의 중심좌표
+            level: 4 // 지도의 확대 레벨
+          };
+
+          //지도를 미리 생성
+          var map = new daum.maps.Map(mapContainer, mapOption);
+          //주소-좌표 변환 객체를 생성
+          var geocoder = new daum.maps.services.Geocoder();
+          //마커를 미리 생성
+          var marker = new daum.maps.Marker({
+              position: new daum.maps.LatLng(37.537187, 127.005476),
+              map: map
+          });
+
+          //주소검생 클릭 시 활성화
+          function getRegion() {
+              new daum.Postcode({
+                  oncomplete: function(data) {
+                      var addr = data.address; // 최종 주소 변수
+                    console.log(addr);
+                      // 주소 정보를 해당 필드에 넣는다.
+                      document.getElementById("getAddress").value = addr;
+                      // 주소로 상세 정보를 검색
+                      geocoder.addressSearch(data.address, function(results, status) {
+                          // 정상적으로 검색이 완료됐으면
+                          if (status === daum.maps.services.Status.OK) {
+
+                              var result = results[0]; //첫번째 결과의 값을 활용
+                              console.log(result);
+
+                              // 해당 주소에 대한 좌표를 받아서
+                              var coords = new daum.maps.LatLng(result.y, result.x);
+                              var latVal = coords.getLat();
+                              var lngVal = coords.getLng();
+                              console.log("coords의 값 : "+coords);
+                              console.log("latVal의 값 : "+latVal);
+                              console.log("lngVal의 값 : " + lngVal);
+
+                              // 지도를 보여준다.
+                              mapContainer.style.display = "block";
+                              map.relayout();
+                              // 지도 중심을 변경한다.
+                              map.setCenter(coords);
+                              // 마커를 결과값으로 받은 위치로 옮긴다.
+                              marker.setPosition(coords);
+
+                              document.getElementById("Lat").value = latVal;
+                              document.getElementById("Lng").value = lngVal;
+
+                              console.log(document.getElementById("Lat").value);
+                              console.log(document.getElementById("Lng").value);
+                          }
+                      });
+                  }
+              }).open();
+          }
+        
+        //지도 설정 끝
+
+      $(document).ready(function(){
+        //시간 설정
+        var dateInput = $('input', '#seek-date').focus(function() {
+                $('.dateDropdown', '#seek-date').remove();
+                var dateDropdown = $('<div class="dateDropdown"/>').appendTo('#seek-date');
+                dateDropdown.datetimepicker({
+
+                  date: dateInput.data('value') || new Date(),
+                  viewMode: 'YMDHM',
+                  onDateChange: function(){
+                      
+                  dateInput.val(this.getText());
+                  dateInput.data('value', this.getValue());
+                 },
+
+	  	    			  onOk: function() {
+                    dateDropdown.remove();
+                  }
+                    });
+                });
+        //시간 설정 끝
+      });
+
+
+    </script>
+
+</body>
+    
+</html>

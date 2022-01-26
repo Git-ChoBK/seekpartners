@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.seek.mapper.RboardAttachMapper">
+	
+	<insert id= "insert">
+	insert into r_board_img(uuid, uploadpath, filename, filetype, rbno)
+	values(#{uuid}, #{uploadpath}, #{filename}, #{filetype}, #{rbno} )
+	</insert>
+	
+	<delete id = "delete">
+	delete from r_board_img where uuid = #{uuid}
+	</delete>
+	
+	<delete id="deleteAll">
+		delete from r_board_img where rbno = #{rbno}
+	</delete>
+	
+	<select id="findByBno" resultType="com.seek.domain.RboardAttachVO">
+	select * from r_board_img where rbno = #{rbno}
+	</select>
+	
+	</mapper>

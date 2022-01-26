@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.seek.mapper.PBoardMapper">
+ 	
+ 	<select id="getList" resultType="com.seek.domain.PBoardVO">
+ 		<![CDATA[
+		select pbno, m_id, p_title, p_content, p_menu, p_rpl_cnt,  p_maxmember, p_time, p_total, p_area, p_areasplit, status
+		  from (select /*+ INDEX_DESC(p_board) */
+		             rownum rn,  pbno, m_id, p_title, p_content, p_menu, p_rpl_cnt,  p_maxmember, p_time, p_total, p_area, p_areasplit, status
+		          from p_board
+		         where
+		               rownum <= 15)
+		 where rn > 0
+		]]>
+ 	</select>
+ 	
+ 	<insert id="register">
+ 		insert into p_board(
+		 pbno,
+  		 m_id,
+  		 p_title,
+  		 p_maxmember,
+  		 p_time,
+  		 p_menu,
+  		 p_content,
+  		 p_date,
+  		 p_update,
+  		 p_rpl_cnt,
+  		 p_total,
+  		 p_area,
+  		 p_areasplit,
+  		 lat,
+  		 lng
+ 		) values (
+ 		 seq_p_board.nextval,
+ 		 #{m_id},
+ 		 #{p_title},
+ 		 #{p_maxmember},
+ 		 #{p_time},
+ 		 #{p_menu},
+ 		 #{p_content},
+ 		 sysdate,
+ 		 sysdate,
+ 		 0,
+ 		 #{p_total},
+ 		 #{p_area},
+ 		 #{p_areasplit},
+ 		 #{lat},
+ 		 #{lng}
+ 		)
+ 	</insert>
+ 	
+ 	<insert id="registerSelectKey">
+		<selectKey keyProperty="pbno" order="BEFORE" resultType="long">
+			select seq_p_board.nextval from dual
+		</selectKey>
+ 		insert into p_board(
+ 	 	 pbno,
+  		 m_id,
+  		 p_title,
+  		 p_maxmember,
+  		 p_time,
+  		 p_menu,
+  		 p_content,
+  		 p_date,
+  		 p_update,
+  		 p_rpl_cnt,
+  		 p_total,
+  		 p_area,
+  		 p_areasplit,
+  		 lat,
+  		 lng
+ 		) values (
+ 		 seq_p_board.nextval,
+ 		 #{m_id},	
+ 		 #{p_title},
+ 		 #{p_maxmember},
+ 		 #{p_time},
+ 		 #{p_menu},
+ 		 #{p_content},
+ 		 sysdate,
+ 		 sysdate,
+ 		 0,
+ 		 #{p_total},
+ 		 #{p_area},
+ 		 #{p_areasplit},
+ 		 #{lat},
+ 		 #{lng}
+ 		)
+ 	</insert>
+ 	
+ 	<select id="get" resultType="com.seek.domain.PBoardVO">
+ 		select * from p_board where pbno = #{pbno}
+ 	</select>
+ 	
+ 	<update id="modify">
+ 		update p_board set
+ 		p_title = #{p_title},
+ 		p_maxmember = #{p_maxmember},
+ 		p_time = #{p_time },
+ 		p_menu = #{p_menu},
+ 		p_content = #{p_content},
+ 		p_update = sysdate,
+ 		p_total = #{p_total},
+ 		p_area = #{p_area},
+ 		p_areasplit = #{p_areasplit},
+ 		lat = #{lat},
+ 		lng = #{lng}
+ 		where pbno = #{pbno}
+ 	</update>
+ 	<delete id="remove">
+ 		delete from p_board where pbno = #{pbno}
+ 	</delete>
+	
+	<sql id="criteria">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+			<foreach item="type" collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">
+							p_title like '%' || #{keyword} || '%'
+						</when>
+						<when test="type == 'A'.toString()">
+							p_menu like '%' || #{keyword} || '%'
+						</when>
+						<when test="type == 'M'.toString()">
+							p_area like '%' || #{keyword} || '%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+	</sql>
+	
+	<!-- 검색및 페이징 처리 -->
+	<select id="getListWithPaging" resultType="com.seek.domain.PBoardVO">
+		<!-- CDATA Section을 사용하는 이유는 XML에서 부등호를 사용할 수 없기 때문(크고 작음을 표현할 수 없음).. &lt;나 &gt;를 사용할 수 있긴 함 -->
+		<![CDATA[
+		select pbno, m_id, p_title, p_content, p_menu, p_rpl_cnt,  p_maxmember, p_time, p_total, p_area, p_areasplit, status
+		  from (select /*+ INDEX_DESC(p_board) */
+		             rownum rn,  pbno, m_id, p_title, p_content, p_menu, p_rpl_cnt,  p_maxmember, p_time, p_total, p_area, p_areasplit, status
+		          from p_board
+		         where
+		]]>
+		
+		<include refid="criteria"></include>
+		
+		<![CDATA[
+		               rownum <= #{pageNum} * #{amount})
+		 where rn > (#{pageNum} -1) * #{amount}
+		]]>
+	</select>
+ 	
+ 	<select id="getTotalCount" resultType="int">
+ 		select count(*) from p_board where
+ 		
+ 		<include refid="criteria"></include>
+ 		
+ 		 pbno > 0
+ 	</select>
+ 	
+  	<select id="findMyPartner" resultType="com.seek.domain.PBoardVO">
+ 		select * from p_board where m_id=#{m_id}
+ 	</select>
+ 	
+ 	<update id="updateStatus">
+ 		update p_board set
+ 		status = #{status}
+ 		where pbno = #{pbno}
+ 	</update>
+ 	
+ 	
+ 	<!-- 마이페이지 페이징 처리 -->
+	<select id="myPagePList" resultType="com.seek.domain.PBoardVO">
+		<!-- CDATA Section을 사용하는 이유는 XML에서 부등호를 사용할 수 없기 때문(크고 작음을 표현할 수 없음).. &lt;나 &gt;를 사용할 수 있긴 함 -->
+		<![CDATA[
+		select pbno, m_id, p_title, p_content, p_menu, p_rpl_cnt,  p_maxmember, p_time, p_total, p_area, p_areasplit, status
+		  from (select /*+ INDEX_DESC(p_board) */
+		             rownum rn,  pbno, m_id, p_title, p_content, p_menu, p_rpl_cnt,  p_maxmember, p_time, p_total, p_area, p_areasplit, status
+		          from p_board
+		         where p_board.m_id = #{m_id}
+		         and pbno>0
+		         and
+		               rownum <= #{cri.pageNum} * #{cri.amount})
+		 where rn > (#{cri.pageNum} -1) * #{cri.amount}
+		 
+		]]>
+	</select>
+	
+ 	<select id="getTotalCountMine" resultType="int">
+ 		select count(*) from p_board
+ 		 where p_board.m_id = #{m_id} and p_board.pbno>0
+ 	</select>
+	
+     <select id="getAverage" resultType="Long">
+       select s_score from score where s_id=#{m_id}
+    </select>
+	
+ 	
+ </mapper>

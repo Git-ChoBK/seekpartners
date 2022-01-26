@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.seek.mapper.MemberMapper">
+ 
+	
+	<resultMap type="com.seek.domain.MemberVO" id="memberMap">
+		<id property="m_id" column="m_id"/>
+		<result property="m_id" column="m_id"/>
+		<result property="m_pw" column="m_pw"/>
+		<result property="m_email" column="m_email"/>
+		<result property="m_join" column="m_join"/>
+		<result property="m_update" column="m_update"/>
+		<result property="m_enabled" column="m_enabled"/>
+		<result property="m_rating" column="m_rating"/>
+		<collection property="authList" resultMap="authMap"></collection>
+	</resultMap>
+	
+	<resultMap type="com.seek.domain.AuthVO" id="authMap">
+		<result property="m_id" column="m_id"/>
+		<result property="m_auth" column="m_auth"/>
+	</resultMap>
+	
+ 	<select id="read" resultMap="memberMap">
+		select 
+		  mem.m_id, m_pw, m_email, m_join, m_update, m_enabled, m_rating, m_auth
+		from 
+		  member mem LEFT OUTER JOIN auth on mem.m_id = auth.m_id 
+		where mem.m_id = #{m_id}
+	</select>
+	
+	<select id="selectOneMember" resultMap="memberMap">
+		select 
+		 m_id, m_pw, m_email, m_join, m_update, m_enabled, m_rating, 
+		from member
+		where m_id = #{m_id}
+	</select>
+	
+	<!-- 회원 등록 -->
+	<insert id="register">
+		insert into member (m_id, m_pw, m_email) values (#{m_id}, #{m_pw}, #{m_email})
+	</insert>
+	
+	<!-- 회원 등록 시 권한 부여 -->
+	<insert id="registerAuth">
+		insert into auth values (#{m_id}, 'ROLE_MEMBER')
+	</insert>
+	
+	<!-- 로그인 -->
+<!--   	<select id="memberLogin" resultType="memberMap">
+		SELECT 
+		  mem.userid, userpw, username, enabled, regdate, updatedate, auth
+		FROM 
+		  tbl_member mem LEFT OUTER JOIN tbl_member_auth auth on mem.userid = auth.userid 
+		WHERE mem.userid = #{userid} and userpw =#{userpw}
+	</select>  -->
+	
+	
+	<!-- 회원정보 수정 -->
+	<update id="memberUpdate">
+		update member set
+		m_pw = #{m_pw},
+		m_email = #{m_email},
+		m_update = sysdate
+		where m_id = #{m_id}
+	</update>
+
+	<!-- 회원탈퇴 -->
+	<delete id="memberDelete">
+		delete from member
+		where m_id = #{m_id}
+	</delete>
+	
+	<!-- 회원탈퇴 시 권한 삭제 -->
+	<delete id="memberDeleteAuth">
+		delete from auth
+		where m_id = #{m_id}
+	</delete>
+	
+	<!-- 아이디 중복체크 -->
+	<select id="idCheck" resultType="int">
+		select count(*) from member where m_id =#{m_id}
+	</select>
+	
+	<!-- 이메일 중복체크 -->
+	<select id="emailCheck" resultType="int">
+		select count(*) from member where m_email =#{m_email}
+	</select>
+	
+	<!-- 아이디&비밀번호 확인 -->
+	<select id="pwCheck" resultType="int">
+		select count(*) from member
+		where m_id = ${m_id}
+		and m_pw= ${m_pw}
+	</select>
+	
+	<!-- 이메일로 아이디 찾기 -->
+	<select id="findID" resultType="String">
+		select m_id from member where m_email = #{m_email}
+	</select>
+	
+	<!-- 아이디와 이메일로 비밀번호 찾기 -->
+	<select id="findPW" resultType="int">
+		select count(*) from member where m_id = #{m_id} and m_email = #{m_email}
+	</select>
+	
+	<!-- 비밀번호 이메일 전송 시 암호화하여 업데이트 -->
+	<update id="pwUpdate">
+		update member set
+		m_pw = #{m_pw}
+		where m_id = #{m_id}
+		and m_email = #{m_email}
+	</update>
+	
+	<!-- 관리자페이지 회원정보 -->
+	<select id="readList" resultMap="memberMap">
+		select 
+		  mem.m_id, m_pw, m_email, m_join, m_update, m_enabled, m_rating, m_auth
+		from 
+		  member mem LEFT OUTER JOIN auth on mem.m_id = auth.m_id
+	</select>
+	
+	<!-- 검색 -->
+   <sql id="criteria">
+      <trim prefix="(" suffix=") AND " prefixOverrides="OR">
+         <foreach item="type" collection="typeArr">
+            <trim prefix="OR">
+               <choose>
+                  <when test="type == 'T'.toString()">   <!-- 아이디 -->
+                     member.m_id like '%' || #{keyword} || '%'
+                  </when>
+                  <when test="type == 'S'.toString()">   <!-- 이메일 -->
+                     m_email like '%' || #{keyword} || '%'
+                  </when>
+               </choose>
+            </trim>
+         </foreach>
+      </trim>
+   </sql>
+   
+   <!-- 페이징 처리 -->
+   <select id="getListWithPaging" resultMap="memberMap">
+   <!-- CDATA Section을 사용하는 이유는 XML에서 부등호를 사용할 수 없기 때문(크고 작음을 표현할 수 없음).. &lt;나 &gt;를 사용할 수 있긴 함 -->
+   <![CDATA[
+      select m_id, m_email, m_pw, m_join, m_update, m_enabled, m_rating, m_auth
+        from (select /*+ INDEX(member) INDEX_DESC(auth) */
+            rownum rn, member.m_id, member.m_email, member.m_pw, member.m_join, member.m_update, member.m_enabled, member.m_rating, 
+            auth.m_auth
+              from member left outer join auth on member.m_id = auth.m_id 
+             where
+   ]]>
+   
+   <include refid="criteria"></include>
+   
+   <![CDATA[
+                  rownum <= #{pageNum} * #{amount})
+       where rn > (#{pageNum} - 1) * #{amount}
+   ]]>
+   </select>
+   
+   
+   <select id="getTotalCount" resultType="int">
+      select count(*) from member
+      where
+      <include refid="criteria"></include>
+      	1=1
+   </select>
+
+ </mapper>

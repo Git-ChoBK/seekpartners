@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.seek.mapper.AlarmMapper">
+ 	
+ 	<insert id="saveAlarm">
+ 		insert into savealarm (pbno, cmd, gBoardWriter, m_id, ano) values (#{pbno}, #{cmd}, #{gboardwriter}, #{m_id}, seq_alarm.nextval)
+ 	</insert>
+ 	
+  	<select id="getAlarmList" resultType="com.seek.domain.AlarmVO">
+ 		select * from savealarm where m_id = #{gboardwriter}
+ 	</select>
+ 	
+ 	<select id="getAlarmListNoRead" resultType="com.seek.domain.AlarmVO">
+ 		select * from savealarm where gboardwriter = #{gboardwriter} and isread = 'N'
+ 	</select>
+ 	
+ 	<update id="readIt">
+ 		update savealarm set isread = 'Y'
+ 		where ano = #{ano}
+ 	</update>
+ 	
+ 	<select id="readCount" resultType="int">
+ 		select count(*) from savealarm where m_id = #{m_id} and isread = 'N'
+ 	
+ 	</select>
+ 	
+ </mapper>
