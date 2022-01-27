@@ -1,5 +1,7 @@
 ## SEEKPARTNERS
-
+<br/>
+![main_afterLogin](https://user-images.githubusercontent.com/89842060/151307201-930f33b5-327c-441c-a969-cb9fd2ddb5a7.png)
+<br/>
 2021.12.06 - 2022.01.16 <br/>
 프로젝트명 : SEEK.PARTNERS <br/>
 프로젝트팀 : 김정민, 김호경, 이동건, 이현구, 조병관 <br/>
