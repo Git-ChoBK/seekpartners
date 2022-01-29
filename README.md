@@ -28,7 +28,7 @@
 
 ## :family: Member
 #### 김정민 (PM)
-> 부트스트랩을 활용한 Front-end 작업 <br/>
+> Front-end(부트스트랩)5 작업 <br/>
 > 회원가입 및 로그인, 마이페이지 CRUD  <br/>
 > 회원가입 및 비밀번호 찾기 시 인증메일 발송 구현 <br/>
 > 지도 API, SweetAlert2, DateTimePicker 적용을 위한 js 작성 <br/>
